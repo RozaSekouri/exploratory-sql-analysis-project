@@ -47,3 +47,5 @@ if __name__ == "__main__":
     engine = connect()
     if engine:
         run_queries_from_file(engine, './src/sql/queries.sql')
+
+        
