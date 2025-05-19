@@ -1,59 +1,57 @@
 
-SELECT r.regions, COUNT(DISTINCT o.species_id) AS species_count
+SELECT r.name AS region_name, COUNT(DISTINCT o.species_id) AS unique_species_count
+FROM regions r
+JOIN observations o ON r.id = o.region_id
+GROUP BY r.id, r.name
+ORDER BY unique_species_count DESC;
+
+SELECT strftime('%m', o.observation_date) AS month, COUNT(*) AS observation_count -- Corrected column name
 FROM observations o
-JOIN regions r ON o.region_id = r.region_id
-GROUP BY r.regions
-ORDER BY species_count DESC;
-
-
-SELECT strftime('%m', observation_date) AS month,
-  COUNT(*) AS observation_count
-FROM observations
-GROUP BY month
+GROUP BY strftime('%m', o.observation_date)
 ORDER BY observation_count DESC;
 
+SELECT s.common_name AS species_name, COUNT(o.species_id) AS observation_count  -- corrected s.name to s.common_name
+FROM species s
+JOIN observations o ON s.id = o.species_id
+GROUP BY s.id, s.common_name
+ORDER BY observation_count ASC
+LIMIT 10; 
 
-SELECT s.species_name, SUM(o.quantity) AS total_observed
-FROM observations o
-JOIN species s ON o.species_id = s.species_id
-GROUP BY s.species_name
-HAVING total_observed < 50
-ORDER BY total_observed ASC;
-
-
-SELECT r.regions, COUNT(DISTINCT o.species_id) AS distinct_species_count
-FROM observations o
-JOIN regions r ON o.region_id = r.region_id
-GROUP BY r.regions
-ORDER BY distinct_species_count DESC
+SELECT r.name AS region_name, COUNT(DISTINCT o.species_id) AS unique_species_count
+FROM regions r
+JOIN observations o ON r.id = o.region_id
+GROUP BY r.id, r.name
+ORDER BY unique_species_count DESC
 LIMIT 1;
 
-
-SELECT s.species_name, COUNT(*) AS observation_count
-FROM observations o
-JOIN species s ON o.species_id = s.species_id
-GROUP BY s.species_name
-ORDER BY observation_count DESC;
-
-
-SELECT observer_name, COUNT(*) AS observation_count
-FROM observations
-GROUP BY observer_name
-ORDER BY observation_count DESC;
-
-
-SELECT s.species_name
+SELECT s.common_name AS species_name, COUNT(o.species_id) AS observation_count  -- corrected s.name to s.common_name
 FROM species s
-LEFT JOIN observations o ON s.species_id = o.species_id
-WHERE o.observation_id IS NULL;
+JOIN observations o ON s.id = o.species_id
+GROUP BY s.id, s.common_name
+ORDER BY observation_count DESC
+LIMIT 10; 
 
 
-SELECT observation_date, COUNT(DISTINCT species_id) AS distinct_species_count
+SELECT observer, COUNT(*) AS observation_count
 FROM observations
-GROUP BY observation_date
-ORDER BY distinct_species_count DESC;
+GROUP BY observer
+ORDER BY observation_count DESC
+LIMIT 10; 
+
+SELECT s.common_name AS species_name  
+FROM species s
+LEFT JOIN observations o ON s.id = o.species_id
+WHERE o.id IS NULL;
+
+
+SELECT o.observation_date, COUNT(DISTINCT o.species_id) AS unique_species_count  
+FROM observations o
+GROUP BY o.observation_date
+ORDER BY unique_species_count DESC
+LIMIT 10;
 
 SELECT * FROM regions;
 SELECT * FROM species;
 SELECT * FROM climate;
-SELECT * FROM observations; 
+SELECT * FROM observations;
+
